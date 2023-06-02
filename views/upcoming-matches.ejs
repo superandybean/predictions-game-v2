@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/helmet.ejs', {title: 'upcoming matches'}) %>
+  <body>
+    <div class="w-full min-h-screen flex flex-col justify-center items-center py-16">
+      <div class="w-full lg:w-4/5 flex-col justify-center items-center px-4">
+        <%- include('partials/header.ejs', {title: 'upcoming matches', user: user}) %>
+        <% if (!user) { %>
+          <div class="divContainer mb-4">
+            <div class="text-xl text-center font-bold">
+              please <a href='/auth/steam'>log in with Steam</a> to predict matches
+            </div>
+          </div>
+        <% } else { %>
+          <div class="divContainer flex-col text-center mb-4 md:text-lg">
+            You currently have <span class="font-bold"><%= userPoints.toFixed(1) %></span> points and are ranked <span class="font-bold"><%= userPlace %></span> out of <%= totalUsers %>. You have currently predicted <span id="matchesPredicted">0</span> out of <%= matches.length %> upcoming matches.
+          </div>
+        <% } %>
+        <% if (matches.length === 0) { %>
+          <div class="divContainer w-full text-center text-lg md:text-xl font-bold">
+            there are no more upcoming matches
+          </div>
+        <% } %>
+        <% for (let i = 0; i < matches.length; i++) { %>
+          <div class="divContainer w-full p-2 mb-4 flex flex-col justify-center" id="match_<%= matches[i].match_id %>_match_container">
+            <div class="flex flex-row justify-center items-center font-bold text-xl md:text-3xl text-center">
+              <img src=<%= logos[matches[i].team1] %> style="height: 36px" class="mr-4"> <%= matches[i].team1 %> vs <%= matches[i].team2 %> <img src=<%= logos[matches[i].team2] %> style="height: 32px" class="ml-4">
+            </div>
+            <div class="flex flex-col md:flex-row w-full justify-center">
+              <div class="flex flex-col w-full md:w-1/6 justify-center text-center">
+                <div>
+                  <%= matches[i].startTime.toDateString().substring(4) %>
+                </div>
+                <div>
+                  <%= matches[i].startTime.getHours() %>:<%= matches[i].startTime.getMinutes() < 10 ? '0' + matches[i].startTime.getMinutes() : matches[i].startTime.getMinutes() %> (EST)
+                </div>
+                <div id="match_<%= matches[i].match_id %>_timer">
+                  <%= setTimer(matches[i].startTime - (new Date())) %>
+                </div>
+              </div>
+              <div class="flex flex-row items-center justify-center mt-10 mb-4 w-full md:w-3/5">
+                <div class="w-1/6 flex justify-end items-center">
+                  <img src="<%= logos[matches[i].team1] %>" style="height: 32px" id="match_<%= matches[i].match_id %>_team1_logo">
+                </div>
+                <div class="w-2/3 flex flex-col justify-center mx-12 relative">
+                  <div 
+                    id="match_<%= matches[i].match_id %>_slider" 
+                    style="height: 1px; top: 48px"
+                    class="w-full flex items-center justify-center z-10" 
+                    data-guessed="<%= matches[i].userGuess === undefined ? false : true %>"
+                  >
+                  </div>
+                  <div class="relative px-px text-center text-xs text-gray-300 select-none" style="top:37.5px">|</div>
+                  <div class="relative w-full px-px text-center flex flex-col items-center justify-center select-none">
+                    <div class="relative text-2xl w-1/2 items-center justify-center" style="top:12.5px; left:<%= matches[i].averageGuess - 50 %>%">
+                      <div>|</div>
+                    </div>
+                  </div>
+                  <div class="relative w-full px-px text-center flex flex-col items-center justify-center select-none" style="top:10px">
+                    <div class="relative flex flex-col w-1/2 items-center justify-center text-center" style="left:<%= matches[i].averageGuess - 50 %>%">
+                      <div><%= matches[i].averageGuess < 50 ? 100 - matches[i].averageGuess : matches[i].averageGuess %>%</div>
+                      <div>Average Guess</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-1/6 flex justify-start items-center">
+                  <img src="<%= logos[matches[i].team2] %>" style="height: 32px" id="match_<%= matches[i].match_id %>_team2_logo">
+                </div>
+              </div>
+              <div class="flex flex-col w-full md:w-1/4 justify-center items-center md:items-start mt-2 md:mt-0">
+                <div>You will <span id="match_<%= matches[i].match_id %>_team1_text" class="font-bold md:text-xl">gain</span> <span id="match_<%= matches[i].match_id %>_team1_points" class="font-bold md:text-xl">0.0</span> points if <%= matches[i].team1 %> wins.</div>
+                <div>You will <span id="match_<%= matches[i].match_id %>_team2_text" class="font-bold md:text-xl">gain</span> <span id="match_<%= matches[i].match_id %>_team2_points" class="font-bold md:text-xl">0.0</span> points if <%= matches[i].team2 %> wins.</div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+    <script>
+      let matchesPredicted = 0
+      /* Update Functions */
+      function calcScore(prob) {
+  			return Math.round((25 - (Math.pow(prob - 100, 2) / 100)) * 10) / 10
+      }
+
+      function updateScore(id) {
+        const match_id = id.substring(6, id.indexOf("_", 6))
+        const prob = parseInt(document.getElementById(id).noUiSlider.get())
+
+        const team1_score = calcScore(100-prob)
+        const team2_score = calcScore(prob)
+
+        if (team1_score > 0) {
+          document.getElementById(`match_${match_id}_team1_text`).innerHTML = 'gain'
+          document.getElementById(`match_${match_id}_team1_text`).style.color = 'green'
+          document.getElementById(`match_${match_id}_team1_points`).innerHTML = team1_score.toFixed(1)
+          document.getElementById(`match_${match_id}_team1_points`).style.color = 'green'
+          document.getElementById(`match_${match_id}_team1_logo`).classList.add("drop-shadow-lg")
+
+          document.getElementById(`match_${match_id}_team2_text`).innerHTML = 'lose'
+          document.getElementById(`match_${match_id}_team2_text`).style.color = 'red'
+          document.getElementById(`match_${match_id}_team2_points`).innerHTML = (-team2_score).toFixed(1)
+          document.getElementById(`match_${match_id}_team2_points`).style.color = 'red'
+          document.getElementById(`match_${match_id}_team2_logo`).classList.remove("drop-shadow-lg")
+        }
+        else if (team1_score < 0) {
+          document.getElementById(`match_${match_id}_team1_text`).innerHTML = 'lose'
+          document.getElementById(`match_${match_id}_team1_text`).style.color = 'red'
+          document.getElementById(`match_${match_id}_team1_points`).innerHTML = (-team1_score).toFixed(1)
+          document.getElementById(`match_${match_id}_team1_points`).style.color = 'red'
+          document.getElementById(`match_${match_id}_team1_logo`).classList.remove("drop-shadow-lg")
+
+          document.getElementById(`match_${match_id}_team2_text`).innerHTML = 'gain'
+          document.getElementById(`match_${match_id}_team2_text`).style.color = 'green'
+          document.getElementById(`match_${match_id}_team2_points`).innerHTML = team2_score.toFixed(1)
+          document.getElementById(`match_${match_id}_team2_points`).style.color = 'green'
+          document.getElementById(`match_${match_id}_team2_logo`).classList.add("drop-shadow-lg")
+        }
+        else {
+          document.getElementById(`match_${match_id}_team1_text`).innerHTML = 'gain'
+          document.getElementById(`match_${match_id}_team1_text`).style.color = 'black'
+          document.getElementById(`match_${match_id}_team1_points`).innerHTML = '0.0'
+          document.getElementById(`match_${match_id}_team1_points`).style.color = 'black'
+          document.getElementById(`match_${match_id}_team1_logo`).classList.remove("drop-shadow-lg")
+
+          document.getElementById(`match_${match_id}_team2_text`).innerHTML = 'gain'
+          document.getElementById(`match_${match_id}_team2_text`).style.color = 'black'
+          document.getElementById(`match_${match_id}_team2_points`).innerHTML = '0.0'
+          document.getElementById(`match_${match_id}_team2_points`).style.color = 'black'
+          document.getElementById(`match_${match_id}_team2_logo`).classList.remove("drop-shadow-lg")
+        }
+      } 
+
+      function postScore(id) {
+        if (document.getElementById(id).dataset.guessed === "false") {
+          document.getElementById(id).dataset.guessed = true
+          matchesPredicted++
+          document.getElementById("matchesPredicted").innerHTML = matchesPredicted
+        } 
+        const match_id = id.substring(6, id.indexOf("_", 6))
+        const prob = parseInt(document.getElementById(id).noUiSlider.get())
+
+        const request = new XMLHttpRequest()
+        request.open('POST', '/insertGuess', true)
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+
+        request.send(`match_id=${match_id}&prob=${prob}`)
+      }
+
+      /* Sliders */
+      <% for (let i = 0; i < matches.length; i++) { %>
+        const match_<%= matches[i].match_id %>_slider = document.getElementById("match_<%= matches[i].match_id %>_slider")
+        noUiSlider.create(match_<%= matches[i].match_id %>_slider, {
+          start: <%= matches[i].userGuess === undefined ? 50 : matches[i].userGuess %>,
+          step: 1,
+          range: {
+            min: 0,
+            max: 100,
+          },
+          tooltips: {
+            to: function(val) {
+              const display_val = val < 50 ? 100 - val : val
+							return `<div class="flex flex-col bg-transparent items-center justify-center text-center"><div class="font-semibold text-center">Your guess:<div class="flex flex-col items-center justify-center text-center"><div class="flex flex-row"><div style="width:13.45px"></div><div class="font-bold text-4xl">${Math.round(display_val)}</div><div>%</div></div></div>`
+						}
+          }
+        })
+
+        <% if (!user) { %>
+          match_<%= matches[i].match_id %>_slider.setAttribute("disabled", true)
+          match_<%= matches[i].match_id %>_slider.getElementsByClassName("noUi-handle")[0].style.cursor = 'not-allowed'
+        <% } %>
+
+        match_<%= matches[i].match_id %>_slider.noUiSlider.on('update', function (values, handle) {
+          updateScore(match_<%= matches[i].match_id %>_slider.id)
+        })
+
+        match_<%= matches[i].match_id %>_slider.noUiSlider.on('end', function (values, handle) {
+          postScore(match_<%= matches[i].match_id %>_slider.id)
+        })
+
+        <% if (matches[i].userGuess) { %>
+          matchesPredicted++
+        <% } %>
+      <% } %>
+
+      document.getElementById("matchesPredicted").innerHTML = matchesPredicted
+
+      /* Timers */
+      function setTimer(diff) {
+        if (diff <= 0) return 'SOON'
+        const days = Math.floor(diff / 86400000)
+        const hours = Math.floor((diff % 86400000) / 3600000)
+        const minutes = Math.floor((diff % 3600000) / 60000)
+        const seconds = Math.floor((diff % 60000) / 1000)
+
+        if (days > 0) {
+          return `${days}d ${hours}h ${minutes}m`
+        }
+        else {
+          if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`
+          else if (minutes > 0) return `${minutes}m ${seconds}s`
+          else if (seconds > 0) return `${seconds}s`
+          else return 'SOON'
+        }
+      }
+      
+      setInterval(function() {
+        const currTime = new Date().getTime()
+        <% for (let i = 0; i < matches.length; i++) { %>
+          document.getElementById("match_<%= matches[i].match_id %>_timer").innerHTML = setTimer(<%= matches[i].startTime.getTime() %> - currTime)
+        <% } %>
+      }, 1000)
+    </script>
+  </body>
+</html>

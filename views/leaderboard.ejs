@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/helmet.ejs', {title: 'leaderboard'}) %>
+  <body>
+    <div class="w-full min-h-screen flex flex-col justify-center items-center py-16">
+      <div class="w-full lg:w-4/5 flex-col justify-center items-center px-4">
+        <%- include('partials/header.ejs', {title: 'leaderboard', user: user}) %>
+        <div class="w-full divContainer overflow-x-auto">
+          <table class="lessTableSpace w-full">
+            <thead class="font-bold border-b-2 border-b-black text-center">
+              <tr>
+                <td style="width: 50px"><span class="hover:cursor-pointer" onclick="changeTableOrder('place')">#</span></td>
+                <td style="width: 80px"><span class="hover:cursor-pointer" onclick="changeTableOrder('change')">&nbsp;&nbsp;</span></td>
+                <td class="text-left"><span class="hover:cursor-pointer" onclick="changeTableOrder('name')">Name</span></td>
+                <td style="width: 170px"><span class="hover:cursor-pointer" onclick="changeTableOrder('points')">Points</span></td>
+                <td style="width: 80px"><span class="hover:cursor-pointer" onclick="changeTableOrder('correct')">Correct</span></td>
+                <td style="width: 5px" class="px-0"></td>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+            </tbody>
+          </table>
+        </div>
+     </div>
+    </div>
+  </body>
+  <script>
+    const leaderboard = JSON.parse('<%- JSON.stringify(leaderboard) %>')
+    const leaderboardBody = document.getElementById('leaderboardBody')
+    const userId = '<%= user ? user.id : '' %>'
+    let orderCount = { points: 0, correct: 0, change: 0, name: 0 }
+    let currOrder = 'points'
+
+    function changeTableOrder(order) {    
+      if (order === 'place') {
+        orderCount[currOrder] += 1
+      }
+      else {
+        if (orderCount[order] === undefined) orderCount[order] = 0
+        orderCount[order] += 1
+        currOrder = order
+      }
+      order = currOrder
+      
+      if (orderCount[order] % 2 === 0) {
+        leaderboard.reverse()
+      }
+      else {
+        leaderboard.sort((a, b) => {
+          if (order === 'points') {
+            return b.score - a.score || b.correct - a.correct || b.spotsChanged - a.spotsChanged || b.prevDay - a.prevDay || a.username - b.username  
+          }
+          else if (order === 'correct') {
+            return b.correct - a.correct || b.score - a.score || b.spotsChanged - a.spotsChanged || b.prevDay - a.prevDay || a.username - b.username  
+          } 
+          else if (order === 'change') {
+            return b.spotsChanged - a.spotsChanged || b.prevDay - a.prevDay || b.score - a.score || b.correct - a.correct || a.username - b.username  
+          } 
+          else if (order === 'name') {
+            return a.username - b.username || b.score - a.score || b.correct - a.correct || b.spotsChanged - a.spotsChanged || b.prevDay - a.prevDay
+          }
+          else {
+            return 0
+          }
+        })
+      }
+
+      leaderboardBody.innerHTML = ''
+
+      let currPlace = 1
+      for (let i = 0; i < leaderboard.length; i++) {
+        const row = document.createElement('tr')
+        const rank = document.createElement('td')
+        const change = document.createElement('td')
+        const name = document.createElement('td')
+        const points = document.createElement('td')
+        const correct = document.createElement('td')
+        const link = document.createElement('td')
+
+        if (userId === leaderboard[i].user) {
+          row.classList.add('font-bold')
+        }
+
+        rank.classList.add('text-center')
+        change.classList.add('text-center')
+        change.setAttribute('title', 'change in rank in the last 24 hours')
+        name.classList.add('text-left', 'truncate')
+        points.classList.add('text-center')
+        correct.classList.add('text-center')
+        link.classList.add('px-1')
+
+        const changeDiv = document.createElement('div')
+        changeDiv.classList.add('flex', 'flex-row', 'items-center', 'justify-center')
+
+        if (i > 0 && leaderboard[i].points === leaderboard[i - 1].points && leaderboard[i].correct === leaderboard[i - 1].correct) {
+          rank.innerHTML = currPlace
+        }
+        else {
+          currPlace = i + 1
+          rank.innerHTML = currPlace
+        }
+
+        if (orderCount[order] % 2 === 1) {
+          leaderboard[i].currPlace = currPlace
+        }
+        else {
+          rank.innerHTML = leaderboard[i].currPlace || leaderboard[i].place
+        }
+
+        if (leaderboard[i].spotsChanged > 0) {
+          changeDiv.classList.add('text-green-600')
+          changeDiv.innerHTML = `▲ ${leaderboard[i].spotsChanged}`
+        }
+        else if (leaderboard[i].spotsChanged < 0) {
+          changeDiv.classList.add('text-red-600')
+          changeDiv.innerHTML = `▼ ${Math.abs(leaderboard[i].spotsChanged)}`
+        }
+        else {
+          changeDiv.innerHTML = `─`
+        }
+        name.innerHTML = `<a href="/user/${leaderboard[i].user}" class="text-black hover:underline">${leaderboard[i].username}</a>`
+        if (leaderboard[i].prevDay < 0) {
+          points.innerHTML = `${leaderboard[i].score.toFixed(1)} <span class="text-red-600" title='points change in the last 24 hours'>(${leaderboard[i].prevDay.toFixed(1)})</span>`
+        }
+        else if (leaderboard[i].prevDay > 0) {
+          points.innerHTML = `${leaderboard[i].score.toFixed(1)} <span class="text-green-600" title='points change in the last 24 hours'>(+${leaderboard[i].prevDay.toFixed(1)})</span>`
+        }
+        else {
+          points.innerHTML = `${leaderboard[i].score.toFixed(1)} <span title='points change in the last 24 hours'>(0.0)</span>`
+        }
+        correct.innerHTML = leaderboard[i].correct
+        link.innerHTML = `<a href="${leaderboard[i].steamURL}" target="_blank" rel="noopener noreferrer" class="px-2 py-1"></a>`
+
+        change.appendChild(changeDiv)
+
+        row.appendChild(rank)
+        row.appendChild(change)
+        row.appendChild(name)
+        row.appendChild(points)
+        row.appendChild(correct)
+        row.appendChild(link)
+
+        leaderboardBody.appendChild(row)
+      }
+    }
+
+    changeTableOrder('points')
+  </script>
+</html>

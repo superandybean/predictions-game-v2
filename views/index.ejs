@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/helmet.ejs', {title: 'home'}) %>
+  <body>
+    <div class="w-full min-h-screen flex flex-col justify-center items-center py-16">
+      <div class="w-full lg:w-4/5 flex-col justify-center items-center px-4">
+        <%- include('partials/header.ejs', {title: 'home', user: user}) %>
+        <div class="w-full flex flex-col-reverse md:flex-row">
+          <div class="w-full md:w-2/3 flex flex-col">
+            <div class="w-full text-center font-bold text-2xl divContainer">
+              how well can you predict cs:go matches?
+            </div>
+          </div>
+          <div class="w-full md:w-1/3 flex flex-col md:ml-4 mb-4 md:mb-0 items-center">
+            <div class="w-full flex flex-row md:flex-col items-center overflow-x-auto snap-x snap-mandatory scroll-smooth" id="sidebar" onscroll="scrollingSidebar()">
+              <div class="w-full flex flex-col divContainer min-w-full md:min-w-0 snap-start relative justify-start md:justify-center items-center h-full px-2 mx-2 md:mx-0 md:mb-4" id="panel_0">
+                <div class="font-bold text-2xl">
+                  <a href="/upcomingMatches" class="text-black hover:underline">upcoming matches</a>
+                </div>
+                <div class="w-full flex flex-col">
+                  <% if (upcomingMatches.length === 0) { %>
+                    <div class="w-full flex flex-col items-center px-4 my-1 font-bold text-center">
+                      no upcoming matches
+                    </div>
+                  <% } %>
+                  <% for (let i = 0; i < upcomingMatches.length; i++) { %>
+                    <div class="w-full flex flex-col items-center px-4 my-1">
+                      <div class="w-full flex flex-row items-center">
+                        <div class="flex flex-row items-center"><img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"></div>
+                        <div class="flex flex-row items-center flex-grow"><%= upcomingMatches[i].team1 %></div>
+                        <% if (upcomingMatches[i].isLive) { %>
+                          <div class="text-right px-2">
+                            <%= upcomingMatches[i].team1score %>
+                          </div>
+                          <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px">
+                            live
+                          </div>
+                        <% } else { %>
+                          <div class="text-center px-2" id="match_<%= upcomingMatches[i].match_id %>_timer">
+                            <%= setTimer(upcomingMatches[i].startTime - (new Date())) %>
+                          </div>
+                        <% } %>
+                      </div>
+                      <div class="w-full flex flex-row items-center">
+                        <div class="flex flex-row items-center"><img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"></div>
+                        <div class="flex flex-row items-center flex-grow"><%= upcomingMatches[i].team2 %></div>
+                        <% if (upcomingMatches[i].isLive) { %>
+                          <div class="text-right px-2">
+                            <%= upcomingMatches[i].team2score %>
+                          </div>
+                          <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px" title="<%= user ? 'your guess' : 'average guess' %>">
+                            <% if (user) { %>
+                              <% if (upcomingMatches[i].userGuess) { %>
+                                <% if (upcomingMatches[i].userGuess < 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].userGuess %>%
+                                <% } else if (upcomingMatches[i].userGuess > 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].userGuess %>%
+                                <% } else { %>
+                                  50%
+                                <% } %>
+                              <% } %>
+                            <% } else { %>
+                              <% if (upcomingMatches[i].numPredictions > 0) { %>
+                                <% if (upcomingMatches[i].averageGuess < 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].averageGuess %>%
+                                <% } else if (upcomingMatches[i].averageGuess > 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].averageGuess %>%
+                                <% } else { %>
+                                  50%
+                                <% } %>
+                              <% } %>
+                            <% } %>
+                          </div>
+                        <% } else { %>
+                          <div class="font-semibold text-center flex flex-row items-center justify-center" id="match_<%= upcomingMatches[i].match_id %>_text" title="<%= user ? 'your guess' : 'average guess' %>">
+                            <% if (user) { %>
+                              <% if (upcomingMatches[i].userGuess) { %>
+                                <% if (upcomingMatches[i].userGuess < 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].userGuess %>%
+                                <% } else if (upcomingMatches[i].userGuess > 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].userGuess %>%
+                                <% } else { %>
+                                  50%
+                                <% } %>
+                              <% } %>
+                            <% } else { %>
+                              <% if (upcomingMatches[i].numPredictions > 0) { %>
+                                <% if (upcomingMatches[i].averageGuess < 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].averageGuess %>%
+                                <% } else if (upcomingMatches[i].averageGuess > 50) { %>
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].averageGuess %>%
+                                <% } else { %>
+                                  50%
+                                <% } %>
+                              <% } %>
+                            <% } %>
+                          </div>
+                        <% } %>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+              <div class="w-full flex flex-col divContainer min-w-full md:min-w-0 snap-start relative justify-start md:justify-center items-center h-full px-2 mx-2 md:mx-0 md:mb-4" id="panel_1">
+                <div class="font-bold text-2xl">
+                  <a href="/completedMatches" class="text-black hover:underline">completed matches</a>
+                </div>
+                <div class="w-full flex flex-col">
+                  <% if (completedMatches.length === 0) { %>
+                    <div class="w-full flex flex-col items-center px-4 my-1 font-bold text-center">
+                      no completed matches
+                    </div>
+                  <% } %>
+                  <% for (let i = 0; i < completedMatches.length; i++) { %>
+                    <div class="w-full flex flex-col items-center px-4 my-1">
+                      <div class="w-full flex flex-row items-center">
+                        <div class="flex flex-row items-center"><img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1"></div>
+                        <div class="flex flex-row items-center flex-grow <%= completedMatches[i].team1score > completedMatches[i].team2score ? 'font-bold' : '' %>"><%= completedMatches[i].team1 %></div>
+                        <div class="text-right px-2 <%= completedMatches[i].team1score > completedMatches[i].team2score ? 'font-bold' : '' %>"><%= completedMatches[i].team1score %></div>
+                        <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px" title="<%= user ? 'your guess' : 'average guess' %>">
+                          <% if (user) { %>
+                            <% if (completedMatches[i].userGuess) { %>
+                              <% if (completedMatches[i].userGuess < 50) { %>
+                                <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-completedMatches[i].userGuess %>%
+                              <% } else if (completedMatches[i].userGuess > 50) { %>
+                                <img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= completedMatches[i].userGuess %>%
+                              <% } else { %>
+                                50%
+                              <% } %>
+                            <% } %>
+                          <% } else { %>
+                            <% if (completedMatches[i].numPredictions > 0) { %>
+                              <% if (completedMatches[i].averageGuess < 50) { %>
+                                <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-completedMatches[i].averageGuess %>%
+                              <% } else if (completedMatches[i].averageGuess > 50) { %>
+                                <img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= completedMatches[i].averageGuess %>%
+                              <% } else { %>
+                                50%
+                              <% } %>
+                            <% } %>
+                          <% } %>
+                        </div>
+                      </div>
+                      <div class="w-full flex flex-row items-center">
+                        <div class="flex flex-row items-center"><img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1"></div>
+                        <div class="flex flex-row items-center flex-grow <%= completedMatches[i].team2score > completedMatches[i].team1score ? 'font-bold' : '' %>"><%= completedMatches[i].team2 %></div>
+                        <div class="text-right px-2 <%= completedMatches[i].team2score > completedMatches[i].team1score ? 'font-bold' : '' %>"><%= completedMatches[i].team2score %></div>
+                        <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px" title="<%= user ? 'your points change' : 'average points change' %>">
+                          <% if (user) { %>
+                            <% if (completedMatches[i].userGuess) { %>
+                              <% if (completedMatches[i].team1score > completedMatches[i].team2score) { %>
+                                <% if (completedMatches[i].userGuess < 50) { %>
+                                  <span class="text-green-600">+<%= calcScore(100-completedMatches[i].userGuess).toFixed(1) %></span>
+                                <% } else if (completedMatches[i].userGuess > 50) { %>
+                                  <span class="text-red-600"><%= calcScore(100-completedMatches[i].userGuess).toFixed(1) %></span>
+                                <% } else { %>
+                                  <span>0.0</span>
+                                <% } %>
+                              <% } else { %>
+                                <% if (completedMatches[i].userGuess < 50) { %>
+                                  <span class="text-red-600"><%= calcScore(completedMatches[i].userGuess).toFixed(1) %></span>
+                                <% } else if (completedMatches[i].userGuess > 50) { %>
+                                  <span class="text-green-600">+<%= calcScore(completedMatches[i].userGuess).toFixed(1) %></span>
+                                <% } else { %>
+                                  <span>0.0</span>
+                                <% } %>
+                              <% } %>
+                            <% } %>
+                          <% } else { %>
+                            <% if (completedMatches[i].numPredictions > 0) { %>
+                              <% if (completedMatches[i].team1score > completedMatches[i].team2score) { %>
+                                <% if (completedMatches[i].averageGuess < 50) { %>
+                                  <span class="text-green-600">+<%= calcScore(100-completedMatches[i].averageGuess).toFixed(1) %></span>
+                                <% } else if (completedMatches[i].averageGuess > 50) { %>
+                                  <span class="text-red-600"><%= calcScore(100-completedMatches[i].averageGuess).toFixed(1) %></span>
+                                <% } else { %>
+                                  <span>0.0</span>
+                                <% } %>
+                              <% } else { %>
+                                <% if (completedMatches[i].averageGuess < 50) { %>
+                                  <span class="text-red-600"><%= calcScore(completedMatches[i].averageGuess).toFixed(1) %></span>
+                                <% } else if (completedMatches[i].averageGuess > 50) { %>
+                                  <span class="text-green-600">+<%= calcScore(completedMatches[i].averageGuess).toFixed(1) %></span>
+                                <% } else { %>
+                                  <span>0.0</span>
+                                <% } %>
+                              <% } %>
+                            <% } %>
+                          <% } %>
+                        </div>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+              <div class="w-full flex flex-col divContainer min-w-full md:min-w-0 snap-start relative justify-start md:justify-center items-center h-full px-2 mx-2 md:mx-0 md:mb-4" id="panel_2">
+                <div class="font-bold text-2xl">
+                  <a href="/leaderboard" class="text-black hover:underline">top players</a>
+                </div>
+                <div class="w-full flex flex-col overflow-x-auto h-full">
+                  <table class="lessTableSpace w-full mt-2">
+                    <thead class="font-bold border-b-2 border-b-black text-center">
+                      <tr>
+                        <td>#</td>
+                        <td></td>
+                        <td>Name</td>
+                        <td style="width: 170px">Score</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for (let i = 0; i < leaderboard.length; i++) { %>
+                        <tr class="<%= user && user.id === leaderboard[i].user ? 'font-bold' : '' %>">
+                          <td class="text-center"><%= leaderboard[i].place+1 %></td>
+                          <td class="text-center">
+                            <div class="w-full flex flex-row justify-center items-end">
+                              <% if (leaderboard[i].spotsChanged < 0) { %>
+                                <span class="text-red-600">▼ <%= leaderboard[i].spotsChanged %></span>
+                              <% } else if (leaderboard[i].spotsChanged > 0) { %>
+                                <span class="text-green-600">▲ <%= leaderboard[i].spotsChanged %></span>
+                              <% } else { %>
+                                ─
+                              <% } %>
+                            </div>
+                          </td>
+                          <td class="text-left truncate"><a href="/user/<%= leaderboard[i].user %>" class="text-black hover:underline"><%= leaderboard[i].username %></a></td>
+                          <td class="text-center">
+                            <div class="w-full flex flex-row justify-center items-end">
+                              <% if (leaderboard[i].prevDay < 0) { %>
+                                <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(<span class="text-red-600"><%= leaderboard[i].prevDay.toFixed(1) %></span>)</span>
+                              <% } else if (leaderboard[i].prevDay > 0) { %>
+                                <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(<span class="text-green-600">+<%= leaderboard[i].prevDay.toFixed(1) %></span>)</span>
+                              <% } else { %>
+                                <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(0.0)</span>
+                              <% } %>
+                            </div>
+                          </td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="md:hidden mt-2">
+              <span class="dot active_dot px-2" onclick="current_panel(0)" id="panel_dot_0"></span>
+              <span class="dot px-2" onclick="current_panel(1)" id="panel_dot_1"></span>
+              <span class="dot px-2" onclick="current_panel(2)" id="panel_dot_2"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    /* Scrolling Sidebar */
+    let currPanel = 0
+    let panelTimer = setInterval(changePanel, 2999)
+    function changePanel() {
+      if (screen.width < 768) {
+        currPanel++
+        setCurrPanel(currPanel % 3)
+      }
+    }
+
+    function setCurrPanel(n) {
+      currPanel = n
+
+      const currScroll = document.documentElement.scrollTop || document.body.scrollTop
+
+      for (let i = 0; i < 3; i++) {
+        if (n == i) {
+          document.getElementById(`panel_dot_${n}`).classList.add('activeDot')
+        }
+        else {
+          document.getElementById(`panel_dot_${i}`).classList.remove('activeDot')
+        }
+      }
+
+      document.getElementById(`panel_${n}`).scrollIntoView()
+      document.documentElement.scrollTop = document.body.scrollTop = currScroll
+    }
+
+    function scrollingSidebar() {
+      clearInterval(panelTimer)
+      panelTimer = setInterval(changePanel, 4999)
+
+      if (document.getElementById("sidebar").scrollLeft > document.getElementById("sidebar").offsetWidth*1.5) {
+        curr_panel = 2
+        document.getElementById("panel_dot_0").classList.remove("active_dot")
+        document.getElementById("panel_dot_1").classList.remove("active_dot")
+
+        document.getElementById(`panel_dot_2`).classList.add("active_dot")
+      }
+      else if (document.getElementById("sidebar").scrollLeft > document.getElementById("sidebar").offsetWidth*0.5) {
+        curr_panel = 1
+        document.getElementById("panel_dot_0").classList.remove("active_dot")
+        document.getElementById("panel_dot_2").classList.remove("active_dot")
+
+        document.getElementById(`panel_dot_1`).classList.add("active_dot")
+      }
+      else {
+        curr_panel = 0
+        document.getElementById("panel_dot_1").classList.remove("active_dot")
+        document.getElementById("panel_dot_2").classList.remove("active_dot")
+
+        document.getElementById(`panel_dot_0`).classList.add("active_dot")
+      }
+    }
+
+    // Sets the height of the sidebar to be the same if on mobile
+    if (screen.width < 768) {
+      document.getElementById("sidebar").style.height = 'auto'
+      document.getElementById("sidebar").style.height = `${Math.max(document.getElementById("panel_0").offsetHeight, document.getElementById("panel_1").offsetHeight, document.getElementById("panel_2").offsetHeight)}px`
+    }
+    addEventListener("resize", (event) => {
+      console.log('pog')
+      if (screen.width < 768) {
+        document.getElementById("sidebar").style.height = 'auto'
+        document.getElementById("sidebar").style.height = `${Math.max(document.getElementById("panel_0").offsetHeight, document.getElementById("panel_1").offsetHeight, document.getElementById("panel_2").offsetHeight)}px`
+      }
+      else {
+        document.getElementById("sidebar").style.height = 'auto'
+      }
+    })
+    
+
+    /* Timers */
+    function setTimer(diff) {
+      if (diff <= 0) return 'SOON'
+      const days = Math.floor(diff / 86400000)
+      const hours = Math.floor((diff % 86400000) / 3600000)
+      const minutes = Math.floor((diff % 3600000) / 60000)
+      const seconds = Math.floor((diff % 60000) / 1000)
+
+      if (days > 0) {
+        return `${days}d ${hours}h ${minutes}m`
+      }
+      else {
+        if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`
+        else if (minutes > 0) return `${minutes}m ${seconds}s`
+        else if (seconds > 0) return `${seconds}s`
+        else return 'SOON'
+      }
+    }
+    
+    setInterval(function() {
+      const currTime = new Date().getTime()
+      <% for (let i = 0; i < upcomingMatches.length; i++) { %>
+        <% if (!upcomingMatches[i].isLive) { %>
+          document.getElementById("match_<%= upcomingMatches[i].match_id %>_timer").innerHTML = setTimer(<%= upcomingMatches[i].startTime.getTime() %> - currTime)
+          document.getElementById("match_<%= upcomingMatches[i].match_id %>_text").style.width = `${document.getElementById("match_<%= upcomingMatches[i].match_id %>_timer").offsetWidth}px`
+        <% } %>
+      <% } %>
+    }, 1000)
+
+    // Code that sets the width of the text above timers
+    <% for (let i = 0; i < upcomingMatches.length; i++) { %>
+      <% if (!upcomingMatches[i].isLive) { %>
+        document.getElementById("match_<%= upcomingMatches[i].match_id %>_text").style.width = `${document.getElementById("match_<%= upcomingMatches[i].match_id %>_timer").offsetWidth}px`
+      <% } %>
+    <% } %>
+  </script>
+</html>

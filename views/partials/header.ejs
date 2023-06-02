@@ -1,0 +1,26 @@
+<div class="w-full flex flex-col md:flex-row justify-between md:items-end mb-4">
+  <div class="text-3xl md:text-5xl font-bold">
+    <%= title %>
+  </div>
+  <div class="text-lg text-semibold">
+    <% if (user) { %>
+      <p>hi <a href="/user/<%= user._json.steamid%>" class="text-black"><%= user.displayName %></a>! <a href='/logout'>logout.</a></p>
+    <% } else { %>
+      <p>log in with <a href='/auth/steam'>Steam</a></p>
+    <% } %>
+  </div>
+</div>
+<div class="w-full grid grid-cols-2 md:flex md:flex-row divContainer mb-4 justify-center md:justify-between">
+  <div class="w-full md:w-1/4 text-center text-lg md:text-xl <% if (title === "home") { %> font-bold<% } %>">
+    <a href="/" class="text-black flex flex-col items-center justify-center text-center w-full h-full hover:font-bold">home</a>
+  </div>
+  <div class="w-full md:w-1/4 text-center text-lg md:text-xl <% if (title === "upcoming matches") { %> font-bold<% } %>">
+    <a href="/upcomingMatches" class="text-black flex flex-col items-center justify-center text-center w-full h-full hover:font-bold">upcoming matches</a>
+  </div>
+  <div class="w-full md:w-1/4 text-center text-lg md:text-xl <% if (title === "completed matches") { %> font-bold<% } %>">
+    <a href="/completedMatches" class="text-black flex flex-col items-center justify-center text-center w-full h-full hover:font-bold">completed matches</a>
+  </div>
+  <div class="w-full md:w-1/4 text-center text-lg md:text-xl <% if (title === "leaderboard") { %> font-bold<% } %>">
+    <a href="/leaderboard" class="text-black flex flex-col items-center justify-center text-center w-full h-full hover:font-bold">leaderboard</a>
+  </div>
+</div>

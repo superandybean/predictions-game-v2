@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/helmet.ejs', {title: 'user profile'}) %>
+  <body>
+    <div class="w-full min-h-screen flex flex-col justify-center items-center py-16">
+      <div class="w-full lg:w-4/5 flex-col justify-center items-center px-4">
+        <%- include('partials/header.ejs', {title: 'user profile', user: user}) %>
+        <% if (userInfo) { %>
+          <div class="w-full divContainer flex flex-row justify-center mb-4">
+            <div class="justify-end pr-8 h-full">
+              <img src="<%= userInfo.avatar %>" class="h-full">
+            </div>
+            <div class="flex flex-col">
+              <div class="font-bold text-xl md:text-3xl"><a href="<%= userInfo.steamURL %>" target="_blank" rel="noopener noreferrer" class="text-black hover:underline"><%= userInfo.displayName %></a></div>
+              <div class="text-lg md:text-2xl">Rank <span class="font-bold"><%= userInfo.place %></span> out of <%= totalUsers %></div>
+              <div class="text-lg md:text-2xl flex items-end">
+                <span class="font-bold"><%= userInfo.score.toFixed(1) %></span>&nbsp;points&nbsp;
+                <span class="flex" title="points in the last 24 hours">
+                  <span class="md:text-xl">(</span>
+                  <% if (userInfo.prevDay < 0) { %>
+                    <span class="text-red-600 md:text-xl"><%= userInfo.prevDay.toFixed(1) %></span>
+                  <% } else if (userInfo.prevDay > 0) { %>
+                    <span class="text-green-600 md:text-xl">+<%= userInfo.prevDay.toFixed(1) %></span>
+                  <% } else { %>
+                    <span class="md:text-xl">0.0</span>
+                  <% } %>
+                  <span class="md:text-xl">)</span>
+                </span>
+              </div>
+              <div class="text-lg md:text-2xl"><span class="text-green-600"><%= userInfo.correct %></span> - <span class="text-red-600"><%= userInfo.totalGuesses - userInfo.correct %></span> pick record</div>
+            </div>
+          </div>
+          <div class="w-full divContainer overflow-x-auto">
+            <table class="w-full tableSpaced">
+              <thead class="font-bold border-b-2 border-b-black text-center">
+                <td colspan="3">
+                  match
+                </td>
+                <td class="border-x-2 border-black">
+                  score
+                </td>
+                <td>
+                  user guess
+                </td>
+                <td>
+                  user points
+                </td>
+              </thead>
+              <tbody>
+                <% for (let i = 0; i < userInfo.userMatches.length; i++) { %>
+                  <tr class="text-center">
+                    <td class="flex flex-row items-center <%= userInfo.userMatches[i].isComplete && userInfo.userMatches[i].team1score > userInfo.userMatches[i].team2score ? 'font-bold' : '' %>"><img src="<%= logos[userInfo.userMatches[i].team1] %>" style="height: 20px" class="pr-2"> <%= userInfo.userMatches[i].team1 %></td>
+                    <td>vs</td>
+                    <td class="flex flex-row items-center <%= userInfo.userMatches[i].isComplete && userInfo.userMatches[i].team2score > userInfo.userMatches[i].team1score ? 'font-bold' : '' %>"><img src="<%= logos[userInfo.userMatches[i].team2] %>" style="height: 20px" class="pr-2"> <%= userInfo.userMatches[i].team2 %></td>
+                    <td class="border-x-2 border-black">
+                      <div class="flex flex-row items-center justify-center">
+                        <% if (userInfo.userMatches[i].isLive) { %>
+                          <span class="font-semibold">live</span>
+                        <% } else if (userInfo.userMatches[i].isComplete) { %>
+                          <img src="<%= logos[userInfo.userMatches[i].team1] %>" style="height: 20px" class="pr-2"> 
+                          <span class="<%= userInfo.userMatches[i].team1score > userInfo.userMatches[i].team2score ? 'font-bold' : '' %>"><%= userInfo.userMatches[i].team1score %></span> - 
+                          <span class="<%= userInfo.userMatches[i].team2score > userInfo.userMatches[i].team1score ? 'font-bold' : '' %>"><%= userInfo.userMatches[i].team2score %></span> 
+                          <img src="<%= logos[userInfo.userMatches[i].team2] %>" style="height: 20px" class="pl-2">
+                        <% } else { %>
+                          <span class="font-semibold">tbd</span>
+                        <% } %>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex flex-row items-center justify-center font-semibold">
+                        <% if (userInfo.userMatches[i].userGuess) { %>
+                          <% if (userInfo.userMatches[i].userGuess < 50) { %>
+                            <img src="<%= logos[userInfo.userMatches[i].team1] %>" style="height: 20px" class="pr-2"><span class=""><%= 100-userInfo.userMatches[i].userGuess %>%</span>
+                          <% } else if (userInfo.userMatches[i].userGuess > 50) { %>
+                            <img src="<%= logos[userInfo.userMatches[i].team2] %>" style="height: 20px" class="pr-2"><span class=""><%= userInfo.userMatches[i].userGuess %>%</span>
+                          <% } else { %>
+                            50%
+                          <% } %>
+                        <% } %>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex flex-row items-center justify-center font-semibold">
+                        <% if (userInfo.userMatches[i].userGuess && userInfo.userMatches[i].isComplete) { const userScore = userInfo.userMatches[i].team1score > userInfo.userMatches[i].team2score ? calcScore(100-userInfo.userMatches[i].userGuess) : calcScore(userInfo.userMatches[i].userGuess) %>
+                          <% if (userScore < 0) { %>
+                            <span class="text-red-600"><%= userScore.toFixed(1) %></span>
+                          <% } else if (userScore > 0) { %>
+                            <span class="text-green-600">+<%= userScore.toFixed(1) %></span>
+                          <% } else { %>
+                            <span class="text-black">0.0</span>
+                          <% } %>
+                        <% } else if (userInfo.userMatches[i].userGuess && !userInfo.userMatches[i].isComplete) { %>
+                          <% if (userInfo.userMatches[i].userGuess < 50) { %>
+                            <span class="text-green-600" title="points if <%= userInfo.userMatches[i].team1%> wins">+<%= calcScore(100-userInfo.userMatches[i].userGuess).toFixed(1) %></span><span class="px-2">/</span><span class="text-red-600" title="points if <%= userInfo.userMatches[i].team2%> wins"><%= calcScore(userInfo.userMatches[i].userGuess).toFixed(1) %></span>
+                          <% } else if (userInfo.userMatches[i].userGuess > 50) { %>
+                            <span class="text-red-600" title="points if <%= userInfo.userMatches[i].team1%> wins"><%= calcScore(100-userInfo.userMatches[i].userGuess).toFixed(1) %></span><span class="px-2">/</span><span class="text-green-600" title="points if <%= userInfo.userMatches[i].team2%> wins">+<%= calcScore(userInfo.userMatches[i].userGuess).toFixed(1) %></span>
+                          <% } else { %>
+                            <span title="points if <%= userInfo.userMatches[i].team1%> wins">0.0</span><span class="px-2">/</span><span title="points if <%= userInfo.userMatches[i].team2%> wins">0.0</span>
+                          <% } %>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="w-full divContainer flex flex-row justify-center mb-4 text-center text-3xl py-2 px-2 font-semibold">
+            this profile does not exist
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>
