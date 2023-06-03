@@ -353,12 +353,12 @@ async function updateLeaderboard() {
     })
 
     oldLeaderboard.sort((a, b) => {
-      return oldLeaderboard[i].correct - oldLeaderboard[i - 1].correct || b.score - a.score
+      return b.correct - a.correct || b.score - a.score
     })
     newLeaderboard.sort((a, b) => {
-      return newLeaderboard[i].correct - newLeaderboard[i - 1].correct || b.score - a.score
+      return b.correct - a.correct || b.score - a.score
     })
-    
+
     const user_to_rank = {}
     for (let i = 0; i < oldLeaderboard.length; i++) {
       if (i == 0) {
