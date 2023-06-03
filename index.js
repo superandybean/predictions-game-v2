@@ -327,6 +327,7 @@ async function updateLeaderboard() {
 
     await db.find().forEach(async function (doc) {
       if (!isNaN(doc._id)) {
+        console.log(doc)
         let newPrevDay = 0.0
         recently_completed.forEach(match_id => {
           if (doc[match_id] !== undefined) {
@@ -352,11 +353,12 @@ async function updateLeaderboard() {
     })
 
     oldLeaderboard.sort((a, b) => {
-      return b.score - a.score
+      return oldLeaderboard[i].correct - oldLeaderboard[i - 1].correct || b.score - a.score
     })
     newLeaderboard.sort((a, b) => {
-      return b.score - a.score
+      return newLeaderboard[i].correct - newLeaderboard[i - 1].correct || b.score - a.score
     })
+    
     const user_to_rank = {}
     for (let i = 0; i < oldLeaderboard.length; i++) {
       if (i == 0) {
@@ -376,7 +378,7 @@ async function updateLeaderboard() {
     for (let i = 0; i < newLeaderboard.length; i++) {
       let place = i
       if (i !== 0) {
-        if (newLeaderboard[i].score === newLeaderboard[i - 1].score && leaderboard[i].correct === leaderboard[i - 1].correct) {
+        if (newLeaderboard[i].score === newLeaderboard[i - 1].score && newLeaderboard[i].correct === newLeaderboard[i - 1].correct) {
           place = newLeaderboard[i - 1].place
         }
       }
