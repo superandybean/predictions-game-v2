@@ -651,6 +651,22 @@ start()
 
 /* EJS Helper Functions */
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Nov', 'Dec']
+
+app.locals.getDate = function(time) {
+  const timeString = time.toLocaleString("en-US", { timeZone: "America/New_York" })
+  const dates = timeString.substring(0, timeString.indexOf(',')).split('/')
+
+  return `${MONTHS[parseInt(dates[0]) - 1]} ${dates[1]} ${dates[2]}`
+}
+
+app.locals.getTime = function(time) {
+  const timeString = time.toLocaleString("en-US", { timeZone: "America/New_York" })
+  const times = timeString.substring(timeString.indexOf(',') + 2, timeString.indexOf(' ', timeString.indexOf(',') + 2)).split(':')
+
+  return `${times[0]}:${times[1]} ${timeString.substring(timeString.indexOf(' ', timeString.indexOf(',') + 2)+1)} (EST)`
+}
+
 app.locals.setTimer = function(diff) {
   if (diff <= 0) return 'SOON'
   const days = Math.floor(diff / 86400000)

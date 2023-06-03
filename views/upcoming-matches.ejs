@@ -29,10 +29,10 @@
             <div class="flex flex-col md:flex-row w-full justify-center">
               <div class="flex flex-col w-full md:w-1/6 justify-center text-center">
                 <div>
-                  <%= matches[i].startTime.toDateString().substring(4) %>
+                  <%= getDate(matches[i].startTime) %>
                 </div>
                 <div>
-                  <%= matches[i].startTime.getHours() %>:<%= matches[i].startTime.getMinutes() < 10 ? '0' + matches[i].startTime.getMinutes() : matches[i].startTime.getMinutes() %> (EST)
+                  <%= getTime(matches[i].startTime) %>
                 </div>
                 <div id="match_<%= matches[i].match_id %>_timer">
                   <%= setTimer(matches[i].startTime - (new Date())) %>
