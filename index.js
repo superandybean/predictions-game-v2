@@ -755,6 +755,7 @@ async function checkDocumentExists(req, res, next) {
           spotsChanged: 0,
         })
 
+        await delay(100) // slight delay to help mongodb problems
         await updateLeaderboard()
 
         next()
