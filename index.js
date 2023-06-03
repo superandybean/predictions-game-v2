@@ -438,6 +438,7 @@ async function newCompletedMatch(match_id) {
       })
 
       console.log('done updating people')
+      delay(100) // slight delay to help mongodb problems
       // update leaderboard
       await updateLeaderboard()
       console.log('done updating leaderboard')
