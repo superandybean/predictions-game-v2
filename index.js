@@ -433,12 +433,13 @@ async function newCompletedMatch(match_id) {
             }
 
             const updateRes = await db.updateOne(query, update)
+            console.log(updateRes)
           }
         }
       })
 
       console.log('done updating people')
-      delay(100) // slight delay to help mongodb problems
+      await delay(1000) // slight delay to help mongodb problems
       // update leaderboard
       await updateLeaderboard()
       console.log('done updating leaderboard')
@@ -755,7 +756,7 @@ async function checkDocumentExists(req, res, next) {
           spotsChanged: 0,
         })
 
-        await delay(100) // slight delay to help mongodb problems
+        await delay(1000) // slight delay to help mongodb problems
         await updateLeaderboard()
 
         next()
