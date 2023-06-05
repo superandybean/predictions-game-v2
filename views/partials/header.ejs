@@ -4,7 +4,7 @@
   </div>
   <div class="text-lg text-semibold">
     <% if (user) { %>
-      <p>hi <a href="/user/<%= user._json.steamid%>" class="text-black"><%= user.displayName %></a>! <a href='/logout'>logout.</a></p>
+      <p>hi <a href="/user/<%= user._json.steamid%>" class="text-black hover:underline"><%= user.displayName %></a>! <a href='/logout'>logout.</a></p>
     <% } else { %>
       <p>log in with <a href='/auth/steam'>Steam</a></p>
     <% } %>

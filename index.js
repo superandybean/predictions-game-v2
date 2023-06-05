@@ -63,7 +63,7 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function getParsedPage(url, delayTime = 0) {
+async function getParsedPage(url) {
   return new Promise(async function (resolve, reject) {
     await delay(1000)
 
@@ -122,7 +122,7 @@ async function getParsedPage(url, delayTime = 0) {
         }
       })
 
-      await browserPage.setDefaultNavigationTimeout(0)
+      await browserPage.setDefaultNavigationTimeout(60000) // 1 minute
       await browserPage.goto(url, { waitUntil: 'networkidle0' })
       
       const fullPage = await browserPage.evaluate(() => document.body.innerHTML)
@@ -135,10 +135,12 @@ async function getParsedPage(url, delayTime = 0) {
     }
     catch (err) {
       console.log(err)
-      const page = await (await gotScraping.get(url)).body
+      // const page = await (await gotScraping.get(url)).body
+      console.log('repeating parse')
+      const page = await getParsedPage(url)
 
       // return new JSSoup(page)
-      resolve(new JSSoup(page))
+      resolve(page)
     }
   })
 }
@@ -209,7 +211,7 @@ async function loadTeams() {
 
 async function loadMatches() {
   return new Promise(async function (resolve, reject) {
-    const match_data = await getParsedPage(MATCHES_URL, 5000)
+    const match_data = await getParsedPage(MATCHES_URL)
     const results_data = await getParsedPage(RESULTS_URL)
 
     const live_matches = match_data.findAll('div', {'class': 'liveMatch'} )
@@ -447,7 +449,7 @@ async function newCompletedMatch(match_id) {
 
 async function checkMatches() {
   // function that loads all matches to check for new matches (repeats from timer)
-  const match_data = await getParsedPage(MATCHES_URL, 5000)
+  const match_data = await getParsedPage(MATCHES_URL)
   const results_data = await getParsedPage(RESULTS_URL)
 
   const live_matches = match_data.findAll('div', {'class': 'liveMatch'} )
@@ -616,7 +618,7 @@ async function repeatedFunctions() {
 
       repeating = false
       resolve(1)
-      }
+    }
   })
 }
 
