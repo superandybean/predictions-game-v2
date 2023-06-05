@@ -15,6 +15,8 @@ const TEAM_TO_LOGO = {
   'Nouns': '/imgs/nouns.webp',
   '9z': '/imgs/9z.png',
   'Evil Geniuses': '/imgs/eg.webp',
+  'Vitality': '/imgs/vitality.webp',
+  'Imperial': '/imgs/imperial.webp',
 }
 
 module.exports = TEAM_TO_LOGO

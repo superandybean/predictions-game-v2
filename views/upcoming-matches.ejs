@@ -40,7 +40,7 @@
               </div>
               <div class="flex flex-row items-center justify-center mt-10 mb-4 w-full md:w-3/5">
                 <div class="w-1/6 flex justify-end items-center">
-                  <img src="<%= logos[matches[i].team1] %>" style="height: 32px" id="match_<%= matches[i].match_id %>_team1_logo">
+                  <img src="<%= logos[matches[i].team1] %>" style="height: 32px" id="match_<%= matches[i].match_id %>_team1_logo" alt="<%= matches[i].team1 %>">
                 </div>
                 <div class="w-2/3 flex flex-col justify-center mx-12 relative">
                   <div 
@@ -50,7 +50,7 @@
                     data-guessed="<%= matches[i].userGuess === undefined ? false : true %>"
                   >
                   </div>
-                  <div class="relative px-px text-center text-xs text-gray-300 select-none" style="top:37.5px">|</div>
+                  <div class="relative px-px text-center text-xs text-black select-none" style="top:37.5px">|</div>
                   <div class="relative w-full px-px text-center flex flex-col items-center justify-center select-none">
                     <div class="relative text-2xl w-1/2 items-center justify-center" style="top:12.5px; left:<%= matches[i].averageGuess - 50 %>%">
                       <div>|</div>
@@ -64,7 +64,7 @@
                   </div>
                 </div>
                 <div class="w-1/6 flex justify-start items-center">
-                  <img src="<%= logos[matches[i].team2] %>" style="height: 32px" id="match_<%= matches[i].match_id %>_team2_logo">
+                  <img src="<%= logos[matches[i].team2] %>" style="height: 32px" id="match_<%= matches[i].match_id %>_team2_logo" alt="<%= matches[i].team2 %>">
                 </div>
               </div>
               <div class="flex flex-col w-full md:w-1/4 justify-center items-center md:items-start mt-2 md:mt-0">

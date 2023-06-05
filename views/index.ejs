@@ -52,9 +52,9 @@
                             <% if (user) { %>
                               <% if (upcomingMatches[i].userGuess) { %>
                                 <% if (upcomingMatches[i].userGuess < 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].userGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team1 %>"> <%= 100-upcomingMatches[i].userGuess %>%
                                 <% } else if (upcomingMatches[i].userGuess > 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].userGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team2 %>"> <%= upcomingMatches[i].userGuess %>%
                                 <% } else { %>
                                   50%
                                 <% } %>
@@ -62,9 +62,9 @@
                             <% } else { %>
                               <% if (upcomingMatches[i].numPredictions > 0) { %>
                                 <% if (upcomingMatches[i].averageGuess < 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].averageGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team1 %>"> <%= 100-upcomingMatches[i].averageGuess %>%
                                 <% } else if (upcomingMatches[i].averageGuess > 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].averageGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team2 %>"> <%= upcomingMatches[i].averageGuess %>%
                                 <% } else { %>
                                   50%
                                 <% } %>
@@ -76,9 +76,9 @@
                             <% if (user) { %>
                               <% if (upcomingMatches[i].userGuess) { %>
                                 <% if (upcomingMatches[i].userGuess < 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].userGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team1 %>"> <%= 100-upcomingMatches[i].userGuess %>%
                                 <% } else if (upcomingMatches[i].userGuess > 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].userGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team2 %>"> <%= upcomingMatches[i].userGuess %>%
                                 <% } else { %>
                                   50%
                                 <% } %>
@@ -86,9 +86,9 @@
                             <% } else { %>
                               <% if (upcomingMatches[i].numPredictions > 0) { %>
                                 <% if (upcomingMatches[i].averageGuess < 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-upcomingMatches[i].averageGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team1 %>"> <%= 100-upcomingMatches[i].averageGuess %>%
                                 <% } else if (upcomingMatches[i].averageGuess > 50) { %>
-                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= upcomingMatches[i].averageGuess %>%
+                                  <img src="<%= logos[upcomingMatches[i].team2] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team2 %>"> <%= upcomingMatches[i].averageGuess %>%
                                 <% } else { %>
                                   50%
                                 <% } %>
@@ -121,9 +121,9 @@
                           <% if (user) { %>
                             <% if (completedMatches[i].userGuess) { %>
                               <% if (completedMatches[i].userGuess < 50) { %>
-                                <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-completedMatches[i].userGuess %>%
+                                <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= completedMatches[i].team1 %>"> <%= 100-completedMatches[i].userGuess %>%
                               <% } else if (completedMatches[i].userGuess > 50) { %>
-                                <img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= completedMatches[i].userGuess %>%
+                                <img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1" alt="<%= completedMatches[i].team2 %>"> <%= completedMatches[i].userGuess %>%
                               <% } else { %>
                                 50%
                               <% } %>
@@ -131,9 +131,9 @@
                           <% } else { %>
                             <% if (completedMatches[i].numPredictions > 0) { %>
                               <% if (completedMatches[i].averageGuess < 50) { %>
-                                <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1"> <%= 100-completedMatches[i].averageGuess %>%
+                                <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= completedMatches[i].team1 %>"> <%= 100-completedMatches[i].averageGuess %>%
                               <% } else if (completedMatches[i].averageGuess > 50) { %>
-                                <img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1"> <%= completedMatches[i].averageGuess %>%
+                                <img src="<%= logos[completedMatches[i].team2] %>" style="height: 20px" class="pr-1" alt="<%= completedMatches[i].team2 %>"> <%= completedMatches[i].averageGuess %>%
                               <% } else { %>
                                 50%
                               <% } %>
@@ -214,7 +214,7 @@
                           <td class="text-center">
                             <div class="w-full flex flex-row justify-center items-end">
                               <% if (leaderboard[i].spotsChanged < 0) { %>
-                                <span class="text-red-600">▼ <%= leaderboard[i].spotsChanged %></span>
+                                <span class="text-red-600">▼ <%= Math.abs(leaderboard[i].spotsChanged) %></span>
                               <% } else if (leaderboard[i].spotsChanged > 0) { %>
                                 <span class="text-green-600">▲ <%= leaderboard[i].spotsChanged %></span>
                               <% } else { %>

@@ -144,9 +144,9 @@ async function getParsedPage(url, delayTime = 0) {
 }
 
 /* Tournament Links */
-const TOURNAMENT_URL = 'https://www.hltv.org/events/6861/iem-dallas-2023'
-const MATCHES_URL = 'https://www.hltv.org/events/6861/matches'
-const RESULTS_URL = 'https://www.hltv.org/results?event=6861'
+const TOURNAMENT_URL = 'https://www.hltv.org/events/6972/blast-premier-spring-final-2023'
+const MATCHES_URL = 'https://www.hltv.org/events/6972/matches'
+const RESULTS_URL = 'https://www.hltv.org/results?event=6972'
 
 const TEAM_TO_LOGO = require('./logos')
 const TEAM_TO_ID = {}
@@ -321,13 +321,11 @@ async function loadDatabases() {
 
 async function updateLeaderboard() {
   return new Promise(async function (resolve, reject) {
-    console.log('updating leaderboard fn')
     const oldLeaderboard = []
     const newLeaderboard = []
 
     await db.find().forEach(async function (doc) {
       if (!isNaN(doc._id)) {
-        console.log(doc)
         let newPrevDay = 0.0
         recently_completed.forEach(match_id => {
           if (doc[match_id] !== undefined) {
@@ -387,7 +385,6 @@ async function updateLeaderboard() {
       newLeaderboard[i].place = place
     }
     leaderboard = newLeaderboard
-    console.log('done updating leaderboard fn')
 
     resolve(1)
   })
@@ -399,7 +396,6 @@ async function newCompletedMatch(match_id) {
   return new Promise(async function (resolve, reject) {
     try {
       const team1win = all_matches[match_id].team1score > all_matches[match_id].team2score
-      console.log('updating people')
       await db.find().forEach(async function (doc) {
         if (!isNaN(doc._id)) {
           const query = { _id: doc._id }
@@ -433,16 +429,13 @@ async function newCompletedMatch(match_id) {
             }
 
             const updateRes = await db.updateOne(query, update)
-            console.log(updateRes)
           }
         }
       })
 
-      console.log('done updating people')
-      await delay(1000) // slight delay to help mongodb problems
       // update leaderboard
+      await delay(1000) // slight delay to help mongodb problems
       await updateLeaderboard()
-      console.log('done updating leaderboard')
 
       resolve(1)
     }
@@ -881,7 +874,7 @@ async function insertGuessHelper(req, res, next) {
 
 function findUserPlace(req, res, next) {
   if (!startup_complete) next()
-  if (!req.user) next()
+  else if (!req.user) next()
   else {
     for (let i = 0; i < leaderboard.length; i++) {
       if (leaderboard[i].user === req.user._json.steamid) {

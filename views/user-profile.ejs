@@ -8,7 +8,7 @@
         <% if (userInfo) { %>
           <div class="w-full divContainer flex flex-row justify-center mb-4">
             <div class="justify-end pr-8 h-full">
-              <img src="<%= userInfo.avatar %>" class="h-full">
+              <img src="<%= userInfo.avatar %>" class="h-full" alt="user avatar">
             </div>
             <div class="flex flex-col">
               <div class="font-bold text-xl md:text-3xl"><a href="<%= userInfo.steamURL %>" target="_blank" rel="noopener noreferrer" class="text-black hover:underline"><%= userInfo.displayName %></a></div>
@@ -70,9 +70,9 @@
                       <div class="flex flex-row items-center justify-center font-semibold">
                         <% if (userInfo.userMatches[i].userGuess) { %>
                           <% if (userInfo.userMatches[i].userGuess < 50) { %>
-                            <img src="<%= logos[userInfo.userMatches[i].team1] %>" style="height: 20px" class="pr-2"><span class=""><%= 100-userInfo.userMatches[i].userGuess %>%</span>
+                            <img src="<%= logos[userInfo.userMatches[i].team1] %>" style="height: 20px" class="pr-2" alt="<%= userInfo.userMatches[i].team1 %>"><span class=""><%= 100-userInfo.userMatches[i].userGuess %>%</span>
                           <% } else if (userInfo.userMatches[i].userGuess > 50) { %>
-                            <img src="<%= logos[userInfo.userMatches[i].team2] %>" style="height: 20px" class="pr-2"><span class=""><%= userInfo.userMatches[i].userGuess %>%</span>
+                            <img src="<%= logos[userInfo.userMatches[i].team2] %>" style="height: 20px" class="pr-2" alt="<%= userInfo.userMatches[i].team2 %>"><span class=""><%= userInfo.userMatches[i].userGuess %>%</span>
                           <% } else { %>
                             50%
                           <% } %>
