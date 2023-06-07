@@ -334,10 +334,11 @@ async function updateLeaderboard() {
             newPrevDay += all_matches[match_id].team1score > all_matches[match_id].team2score ? calcScore(100 - doc[match_id]) : calcScore(doc[match_id])
           }
         })
+        newPrevDay = parseFloat(newPrevDay.toFixed(1))
 
         oldLeaderboard.push({
           user: doc._id,
-          score: doc.score - newPrevDay,
+          score: parseFloat((doc.score - newPrevDay).toFixed(1)),
         })
         newLeaderboard.push({
           user: doc._id,
@@ -1025,7 +1026,7 @@ app.get('/test', async (req, res) => {
     res.send(all_matches)
   }
   else {
-    res.send()
+    res.render('404')
   }
 })
 
@@ -1034,7 +1035,7 @@ app.get('/leaderboardtest', async (req, res) => {
     res.send(leaderboard)
   }
   else {
-    res.send()
+    res.render('404')
   }
 })
 
