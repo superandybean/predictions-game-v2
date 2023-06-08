@@ -340,10 +340,11 @@ async function updateGlobalLeaderboard() {
             newPrevDay += all_matches[match_id].team1score > all_matches[match_id].team2score ? calcScore(100 - doc[match_id]) : calcScore(doc[match_id])
           }
         })
+        newPrevDay = parseFloat(newPrevDay.toFixed(1))
 
         oldLeaderboard.push({
           user: doc._id,
-          score: doc.score - newPrevDay,
+          score: parseFloat((doc.score - newPrevDay).toFixed(1)),
         })
         newLeaderboard.push({
           user: doc._id,
@@ -370,10 +371,10 @@ async function updateGlobalLeaderboard() {
     })
 
     oldLeaderboard.sort((a, b) => {
-      return b.correct - a.correct || b.score - a.score
+      return b.score - a.score || b.correct - a.correct
     })
     newLeaderboard.sort((a, b) => {
-      return b.correct - a.correct || b.score - a.score
+      return b.score - a.score || b.correct - a.correct
     })
 
     const user_to_rank = {}
@@ -980,6 +981,7 @@ async function getCustomLeaderboard(req, res, next) {
       }
       else {
         const leaderboardUsers = JSON.parse(results.users)
+
         if (req.user._json.steamid in leaderboardUsers) {
           const oldLeaderboard = []
           const newLeaderboard = []
@@ -1031,6 +1033,11 @@ async function getCustomLeaderboard(req, res, next) {
           }
 
           res.locals.customLeaderboard = newLeaderboard
+          
+          // if owner, show requests as well
+          if (req.user._json.steamid !== results.admin) {
+            res.locals.leaderboardRequests = JSON.parse(results.requests)
+          }
 
           next()
         }
@@ -1063,6 +1070,7 @@ async function createCustomLeaderboard(req, res, next) {
 
       const newDoc = {
         _id: leaderboardID,
+        name: `${req.user._json.personaname}'s Leaderboard`,
         users: JSON.stringify(users),
         admin: res.locals.userDoc._id,
         requests: JSON.stringify({}),
@@ -1119,20 +1127,94 @@ async function joinCustomLeaderboard(req, res, next) {
       const results = await leaderboard_db.findOne(query)
 
       if (results === null) {
-        console.log(`join custom leaderboard fail, leaderboard does not exist: ${req.params.leaderboardID}, user ${req.user._json.steamid}`)
+        console.log(`request custom leaderboard fail, leaderboard does not exist: ${req.params.leaderboardID}, user ${req.user._json.steamid}`)
         next()
       }
       else {
         const users = JSON.parse(results.users)
-        if (req.user._json.steamid in users) {
-          console.log(`join custom leaderboard fail, user already in leaderboard: ${req.user._json.steamid}, leaderboard: ${req.params.leaderboardID}`)
+        const requests = JSON.parse(results.requests)
+        if (req.user._json.steamid in users || req.user._json.steamid in requests) {
+          console.log(`request custom leaderboard fail, user already in leaderboard: ${req.user._json.steamid}, leaderboard: ${req.params.leaderboardID}`)
           next()
         }
         else {
-          users[req.user._json.steamid] = true
-          const update = { $set: { users: JSON.stringify(users) } }
+          requests[req.user._json.steamid] = true
+          const update = { $set: { users: JSON.stringify(requests) } }
+          const updateRes = await leaderboard_db.updateOne(query, update)
+          console.log(`user requested custom leaderboard: ${req.user._json.steamid}, leaderboard: ${req.params.leaderboardID}`)
+
+          next()
+        }
+      }
+    }
+  }
+}
+
+async function acceptCustomLeaderboard(req, res, next) {
+  if (!startup_complete) next()
+  else {
+    if (req.user === undefined || req.user._json === undefined) {
+      console.log(`accept custom leaderboard fail, not logged in`)
+      next()
+    }
+    else {
+      const query = { _id: req.params.leaderboardID }
+      const results = await leaderboard_db.findOne(query)
+
+      if (results === null) {
+        console.log(`accept custom leaderboard fail, leaderboard does not exist: ${req.params.leaderboardID}, user ${req.user._json.steamid}`)
+        next()
+      }
+      else {
+        const users = JSON.parse(results.users)
+        const requests = JSON.parse(results.requests)
+        if (req.user._json.steamid in users) {
+          console.log(`accept custom leaderboard fail, user already in leaderboard: ${req.user._json.steamid}, leaderboard: ${req.params.leaderboardID}`)
+          next()
+        }
+        else if (!(req.body.user in requests)) {
+          console.log(`accept custom leaderboard fail, user not in requests: ${req.body.user}, leaderboard: ${req.params.leaderboardID}`)
+          next()
+        }
+        else {
+          users[req.body.user] = true
+          delete requests[req.body.user]
+
+          const update = { $set: { users: JSON.stringify(users), requests: JSON.stringify(requests) } }
           const updateRes = await leaderboard_db.updateOne(query, update)
           console.log(`user joined custom leaderboard: ${req.user._json.steamid}, leaderboard: ${req.params.leaderboardID}`)
+
+          next()
+        }
+      }
+    }
+  }
+}
+
+async function changeCustomLeaderboard(req, res, next) {
+  if (!startup_complete) next()
+  else {
+    if (req.user === undefined || req.user._json === undefined) {
+      console.log(`change custom leaderboard fail, not logged in`)
+      next()
+    }
+    else {
+      const query = { _id: req.params.leaderboardID }
+      const results = await leaderboard_db.findOne(query)
+
+      if (results === null) {
+        console.log(`change custom leaderboard fail, leaderboard does not exist: ${req.params.leaderboardID}, user ${req.user._json.steamid}`)
+        next()
+      }
+      else {
+        if (req.user._json.steamid !== results.admin) {
+          console.log(`change custom leaderboard fail, user not admin: ${req.user._json.steamid}, leaderboard: ${req.params.leaderboardID}`)
+          next()
+        }
+        else {
+          const update = { $set: { name: req.params.name } }
+          const updateRes = await leaderboard_db.updateOne(query, update)
+          console.log(`name changed custom leaderboard: ${req.params.leaderboardID}`)
 
           next()
         }
@@ -1336,6 +1418,14 @@ app.post('/joinCustomLeaderboard', [joinCustomLeaderboard], async (req, res) => 
   res.send()
 })
 
+app.post('/acceptCustomLeaderboard', [acceptCustomLeaderboard], async (req, res) => {
+  res.send()
+})
+
+app.post('/changeCustomLeaderboard', [changeCustomLeaderboard], async (req, res) => {
+  res.send()
+})
+
 app.post('/leaveCustomLeaderboard', [leaveCustomLeaderboard], async (req, res) => {
   res.send()
 })
@@ -1370,7 +1460,7 @@ app.get('/test', async (req, res) => {
     res.send(all_matches)
   }
   else {
-    res.send()
+    res.render('404')
   }
 })
 
@@ -1379,7 +1469,7 @@ app.get('/leaderboardtest', async (req, res) => {
     res.send(leaderboard)
   }
   else {
-    res.send()
+    res.render('404')
   }
 })
 
