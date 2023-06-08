@@ -588,12 +588,12 @@ async function updateRecentlyCompleted() {
   return new Promise(async function (resolve, reject) {
     const curr_time = new Date()
     let updated = false
-    for (const match_id in recently_completed) {
+    recently_completed.forEach(match_id => {
       if (all_matches[match_id].endTime.getTime() + 86400000 < curr_time.getTime()) {
         recently_completed.delete(match_id)
         updated = true
       }
-    }
+    })
 
     if (updated) {
       // need to update leaderboard with new 24 hr updates
