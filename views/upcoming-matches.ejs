@@ -178,7 +178,7 @@
           postScore(match_<%= matches[i].match_id %>_slider.id)
         })
 
-        <% if (matches[i].userGuess) { %>
+        <% if (matches[i].userGuess !== undefined) { %>
           matchesPredicted++
         <% } %>
       <% } %>
