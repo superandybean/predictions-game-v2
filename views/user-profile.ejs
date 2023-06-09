@@ -73,7 +73,7 @@
                       </td>
                       <td>
                         <div class="flex flex-row items-center justify-center font-semibold">
-                          <% if (userInfo.userMatches[i].userGuess) { %>
+                          <% if (userInfo.userMatches[i].userGuess !== undefined) { %>
                             <% if (userInfo.userMatches[i].userGuess < 50) { %>
                               <img src="<%= logos[userInfo.userMatches[i].team1] %>" style="height: 20px" class="pr-2" alt="<%= userInfo.userMatches[i].team1 %>"><span class=""><%= 100-userInfo.userMatches[i].userGuess %>%</span>
                             <% } else if (userInfo.userMatches[i].userGuess > 50) { %>
@@ -94,7 +94,7 @@
                             <% } else { %>
                               <span class="text-black">0.0</span>
                             <% } %>
-                          <% } else if (userInfo.userMatches[i].userGuess && !userInfo.userMatches[i].isComplete) { %>
+                          <% } else if (userInfo.userMatches[i].userGuess !== undefined && !userInfo.userMatches[i].isComplete) { %>
                             <% if (userInfo.userMatches[i].userGuess < 50) { %>
                               <span class="text-green-600" title="points if <%= userInfo.userMatches[i].team1%> wins">+<%= calcScore(100-userInfo.userMatches[i].userGuess).toFixed(1) %></span><span class="px-2">/</span><span class="text-red-600" title="points if <%= userInfo.userMatches[i].team2%> wins"><%= calcScore(userInfo.userMatches[i].userGuess).toFixed(1) %></span>
                             <% } else if (userInfo.userMatches[i].userGuess > 50) { %>

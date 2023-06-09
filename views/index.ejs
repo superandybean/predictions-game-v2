@@ -50,7 +50,7 @@
                           </div>
                           <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px" title="<%= user ? 'your guess' : 'average guess' %>">
                             <% if (user) { %>
-                              <% if (upcomingMatches[i].userGuess) { %>
+                              <% if (upcomingMatches[i].userGuess !== undefined) { %>
                                 <% if (upcomingMatches[i].userGuess < 50) { %>
                                   <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team1 %>"> <%= 100-upcomingMatches[i].userGuess %>%
                                 <% } else if (upcomingMatches[i].userGuess > 50) { %>
@@ -74,7 +74,7 @@
                         <% } else { %>
                           <div class="font-semibold text-center flex flex-row items-center justify-center" id="match_<%= upcomingMatches[i].match_id %>_text" title="<%= user ? 'your guess' : 'average guess' %>">
                             <% if (user) { %>
-                              <% if (upcomingMatches[i].userGuess) { %>
+                              <% if (upcomingMatches[i].userGuess !== undefined) { %>
                                 <% if (upcomingMatches[i].userGuess < 50) { %>
                                   <img src="<%= logos[upcomingMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= upcomingMatches[i].team1 %>"> <%= 100-upcomingMatches[i].userGuess %>%
                                 <% } else if (upcomingMatches[i].userGuess > 50) { %>
@@ -119,7 +119,7 @@
                         <div class="text-right px-2 <%= completedMatches[i].team1score > completedMatches[i].team2score ? 'font-bold' : '' %>"><%= completedMatches[i].team1score %></div>
                         <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px" title="<%= user ? 'your guess' : 'average guess' %>">
                           <% if (user) { %>
-                            <% if (completedMatches[i].userGuess) { %>
+                            <% if (completedMatches[i].userGuess !== undefined) { %>
                               <% if (completedMatches[i].userGuess < 50) { %>
                                 <img src="<%= logos[completedMatches[i].team1] %>" style="height: 20px" class="pr-1" alt="<%= completedMatches[i].team1 %>"> <%= 100-completedMatches[i].userGuess %>%
                               <% } else if (completedMatches[i].userGuess > 50) { %>
@@ -147,7 +147,7 @@
                         <div class="text-right px-2 <%= completedMatches[i].team2score > completedMatches[i].team1score ? 'font-bold' : '' %>"><%= completedMatches[i].team2score %></div>
                         <div class="font-semibold text-center flex flex-row items-center justify-center" style="width: 70px" title="<%= user ? 'your points change' : 'average points change' %>">
                           <% if (user) { %>
-                            <% if (completedMatches[i].userGuess) { %>
+                            <% if (completedMatches[i].userGuess !== undefined) { %>
                               <% if (completedMatches[i].team1score > completedMatches[i].team2score) { %>
                                 <% if (completedMatches[i].userGuess < 50) { %>
                                   <span class="text-green-600">+<%= calcScore(100-completedMatches[i].userGuess).toFixed(1) %></span>
