@@ -101,7 +101,7 @@
                     </td>
                     <td>
                       <div class="flex flex-row items-center justify-center font-semibold">
-                        <% if (matches[i].userGuess && matches[i].isComplete) { const userScore = matches[i].team1score > matches[i].team2score ? calcScore(100-matches[i].userGuess) : calcScore(matches[i].userGuess) %>
+                        <% if (matches[i].userGuess !== undefined && matches[i].isComplete) { const userScore = matches[i].team1score > matches[i].team2score ? calcScore(100-matches[i].userGuess) : calcScore(matches[i].userGuess) %>
                           <% if (userScore < 0) { %>
                             <span class="text-red-600"><%= userScore.toFixed(1) %></span>
                           <% } else if (userScore > 0) { %>
