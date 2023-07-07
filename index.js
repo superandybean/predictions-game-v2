@@ -149,6 +149,7 @@ async function getParsedPage(url) {
 const TOURNAMENT_URL = 'https://www.hltv.org/events/6973/blast-premier-fall-groups-2023'
 const MATCHES_URL = 'https://www.hltv.org/events/6973/matches'
 const RESULTS_URL = 'https://www.hltv.org/results?event=6973'
+const TOURNAMENT_NAME = 'BLAST Premier Fall Groups 2023'
 
 const TEAM_TO_LOGO = require('./logos')
 const TEAM_TO_ID = {}
@@ -956,7 +957,7 @@ app.get('/', [checkDocumentExists, getLiveMatches, getUpcomingMatches, getComple
     const completedMatches = res.locals.completed_matches.filter(match => match.isComplete).slice(0, MATCHES_SHOWN)
     const leaderboardDisplay = leaderboard.slice(0, LEADERBOARD_SHOWN)
 
-    res.render('index', { user: req.user, upcomingMatches: upcomingMatches, completedMatches: completedMatches, leaderboard: leaderboardDisplay, logos: TEAM_TO_LOGO })
+    res.render('index', { user: req.user, upcomingMatches: upcomingMatches, completedMatches: completedMatches, leaderboard: leaderboardDisplay, logos: TEAM_TO_LOGO, tournamentName: TOURNAMENT_NAME })
   }
 })
 

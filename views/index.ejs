@@ -7,8 +7,29 @@
         <%- include('partials/header.ejs', {title: 'home', user: user}) %>
         <div class="w-full flex flex-col-reverse md:flex-row">
           <div class="w-full md:w-2/3 flex flex-col">
-            <div class="w-full text-center font-bold text-2xl divContainer">
+            <div class="w-full text-center font-bold text-2xl mb-4 divContainer">
               how well can you predict cs:go matches?
+            </div>
+            <div class="w-full mb-4 divContainer text-center">
+              predict the outcomes of <span class="font-bold"><%= tournamentName %></span> cs:go matches in this predictor game, inspired by <a href="https://projects.fivethirtyeight.com/2022-nfl-forecasting-game/" target="_blank" rel="noopener noreferrer">FiveThiryEight's NFL Forecasting Game</a>.
+            </div>
+            <div class="w-full mb-4 divContainerLarger text-center">
+              head over to the <a href="/upcomingMatches">upcoming matches</a> page (after <a href="/auth/steam">logging in through steam</a>)  to predict the outcomes of upcoming matches—however, there's a twist. instead of simply picking what teams will win, you will need to also add the confidence in your pick with the slider. correct picks with high confidence rewards you more points than correct picks with low confidence; however, incorrect high confidence picks are penalized harshly, especially when compared to incorrect low confidence picks. 
+            </div>
+            <div class="w-full mb-4 divContainerLarger text-center">
+              the scoring system uses rescaled <a href="https://en.wikipedia.org/wiki/Brier_score" target="_blank" rel="noopener noreferrer">brier scores</a>, where possible points from each game range from a 25 point gain to a 75 point loss. the formula used is
+              <br>
+              <code>
+                points = 25 - ((p - 100)^2 / 100)
+              </code>
+              <br>
+              where <code>p</code> is the confidence value you gave to the winning team.
+            </div>
+            <div class="w-full mb-4 divContainerLarger text-center">
+              for example, suppose you gave Heroic a 87% chance to beat Imperial in the semi-finals of <a href="https://www.hltv.org/events/6972/blast-premier-spring-final-2023" target="_blank" rel="noopener noreferrer">Blast Premier Spring Final 2023</a>. Despite Imperial's best efforts, <a href="https://clips.twitch.tv/CrowdedYummyPorcupineLeeroyJenkins-R9BA-LUFB7TQanX9" target="_blank" rel="noopener noreferrer">cadiaN's 1v2 clutch for match point</a> allowed to Heroic to end their semi-final curse with a <a href="https://www.hltv.org/matches/2364751/heroic-vs-imperial-blast-premier-spring-final-2023" target="_blank" rel="noopener noreferrer">2-1 victory</a>. Since Heroic won and you predicted them to win with 87% confidence, you would have earned 23.3 points. However, if Imperial did end up winning, you would have lost 50.7 points instead.
+            </div>
+            <div class="w-full mb-4 divContainerLarger text-center">
+              finally, you can view the results of previous matches in the <a href="/completedMatches">completed matches</a> page and find the leaderboard at the <a href="/leaderboard">leaderboard</a> page.
             </div>
           </div>
           <div class="w-full md:w-1/3 flex flex-col md:ml-4 mb-4 md:mb-0 items-center">

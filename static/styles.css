@@ -15,6 +15,9 @@ a[target="_blank"]::after {
 .divContainer {
   @apply bg-gray-300 rounded-xl px-2 py-2
 }
+.divContainerLarger {
+  @apply bg-gray-300 rounded-xl px-8 py-2
+}
 
 .noUi-target {
   border-color: black; 
