@@ -146,9 +146,9 @@ async function getParsedPage(url) {
 }
 
 /* Tournament Links */
-const TOURNAMENT_URL = 'https://www.hltv.org/events/6972/blast-premier-spring-final-2023'
-const MATCHES_URL = 'https://www.hltv.org/events/6972/matches'
-const RESULTS_URL = 'https://www.hltv.org/results?event=6972'
+const TOURNAMENT_URL = 'https://www.hltv.org/events/6973/blast-premier-fall-groups-2023'
+const MATCHES_URL = 'https://www.hltv.org/events/6973/matches'
+const RESULTS_URL = 'https://www.hltv.org/results?event=6973'
 
 const TEAM_TO_LOGO = require('./logos')
 const TEAM_TO_ID = {}
