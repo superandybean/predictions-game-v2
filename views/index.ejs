@@ -198,46 +198,52 @@
                   <a href="/leaderboard" class="text-black hover:underline">top players</a>
                 </div>
                 <div class="w-full flex flex-col overflow-x-auto h-full">
-                  <table class="lessTableSpace w-full mt-2">
-                    <thead class="font-bold border-b-2 border-b-black text-center">
-                      <tr>
-                        <td>#</td>
-                        <td></td>
-                        <td>Name</td>
-                        <td style="width: 170px">Score</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% for (let i = 0; i < leaderboard.length; i++) { %>
-                        <tr class="<%= user && user.id === leaderboard[i].user ? 'font-bold' : '' %>">
-                          <td class="text-center"><%= leaderboard[i].place+1 %></td>
-                          <td class="text-center">
-                            <div class="w-full flex flex-row justify-center items-end">
-                              <% if (leaderboard[i].spotsChanged < 0) { %>
-                                <span class="text-red-600">▼ <%= Math.abs(leaderboard[i].spotsChanged) %></span>
-                              <% } else if (leaderboard[i].spotsChanged > 0) { %>
-                                <span class="text-green-600">▲ <%= leaderboard[i].spotsChanged %></span>
-                              <% } else { %>
-                                ─
-                              <% } %>
-                            </div>
-                          </td>
-                          <td class="text-left truncate"><a href="/user/<%= leaderboard[i].user %>" class="text-black hover:underline"><%= leaderboard[i].username %></a></td>
-                          <td class="text-center">
-                            <div class="w-full flex flex-row justify-center items-end">
-                              <% if (leaderboard[i].prevDay < 0) { %>
-                                <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(<span class="text-red-600"><%= leaderboard[i].prevDay.toFixed(1) %></span>)</span>
-                              <% } else if (leaderboard[i].prevDay > 0) { %>
-                                <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(<span class="text-green-600">+<%= leaderboard[i].prevDay.toFixed(1) %></span>)</span>
-                              <% } else { %>
-                                <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(0.0)</span>
-                              <% } %>
-                            </div>
-                          </td>
+                  <% if (leaderboard.length === 0) { %>
+                    <div class="w-full flex flex-col items-center px-4 my-1 font-bold text-center">
+                      no players
+                    </div>
+                  <% } else { %>
+                    <table class="lessTableSpace w-full mt-2">
+                      <thead class="font-bold border-b-2 border-b-black text-center">
+                        <tr>
+                          <td>#</td>
+                          <td></td>
+                          <td>Name</td>
+                          <td style="width: 170px">Score</td>
                         </tr>
-                      <% } %>
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        <% for (let i = 0; i < leaderboard.length; i++) { %>
+                          <tr class="<%= user && user.id === leaderboard[i].user ? 'font-bold' : '' %>">
+                            <td class="text-center"><%= leaderboard[i].place+1 %></td>
+                            <td class="text-center">
+                              <div class="w-full flex flex-row justify-center items-end">
+                                <% if (leaderboard[i].spotsChanged < 0) { %>
+                                  <span class="text-red-600">▼ <%= Math.abs(leaderboard[i].spotsChanged) %></span>
+                                <% } else if (leaderboard[i].spotsChanged > 0) { %>
+                                  <span class="text-green-600">▲ <%= leaderboard[i].spotsChanged %></span>
+                                <% } else { %>
+                                  ─
+                                <% } %>
+                              </div>
+                            </td>
+                            <td class="text-left truncate"><a href="/user/<%= leaderboard[i].user %>" class="text-black hover:underline"><%= leaderboard[i].username %></a></td>
+                            <td class="text-center">
+                              <div class="w-full flex flex-row justify-center items-end">
+                                <% if (leaderboard[i].prevDay < 0) { %>
+                                  <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(<span class="text-red-600"><%= leaderboard[i].prevDay.toFixed(1) %></span>)</span>
+                                <% } else if (leaderboard[i].prevDay > 0) { %>
+                                  <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(<span class="text-green-600">+<%= leaderboard[i].prevDay.toFixed(1) %></span>)</span>
+                                <% } else { %>
+                                  <%= leaderboard[i].score.toFixed(1) %> <span class="text-sm ml-2">(0.0)</span>
+                                <% } %>
+                              </div>
+                            </td>
+                          </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  <% } %>
                 </div>
               </div>
             </div>

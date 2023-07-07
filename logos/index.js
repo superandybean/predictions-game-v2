@@ -17,6 +17,9 @@ const TEAM_TO_LOGO = {
   'Evil Geniuses': '/imgs/eg.webp',
   'Vitality': '/imgs/vitality.webp',
   'Imperial': '/imgs/imperial.webp',
+  'Ninjas in Pyjamas': '/imgs/nip.webp',
+  'Natus Vincere': '/imgs/navi.svg',
+  'BIG': '/imgs/big.svg',
 }
 
 module.exports = TEAM_TO_LOGO
